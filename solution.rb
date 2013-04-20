@@ -1,6 +1,8 @@
-data = []
-chains = []
-counter  = 0
+chain_store = []
+chain_store_transfer = []
+
+data_subsets = {}
+load_counter = 0
 
 ### load applicable words into array
 File.open("./words").each_line do |line|
@@ -10,57 +12,77 @@ File.open("./words").each_line do |line|
   # do not include words that:
   # 1) contain apostrophes
   # 2) are less than 6 letters
-  data << parsed_line if (parsed_line.length > 5 and !parsed_line.include?("'"))
+  if (parsed_line.length > 5) and ( !parsed_line.include?("'") )
+    first_letter = parsed_line.match(/./).to_s
+    data_subsets["#{first_letter}"] = [] unless data_subsets["#{first_letter}"]
+
+    data_subsets[first_letter] << parsed_line
+    chain_store << [parsed_line]
+
+    load_counter += 1
+  end
 end
-puts data.length
+puts load_counter
+
 
 ### recursive method called by main iterator
-def recursive_chain(data, word)
-  keep_going = true
-  chain = []
-  chain << word
+def next_words(word, data_subsets)
+  total_chars = word.length
+  last_six = word[(total_chars-6)..(total_chars)] # move this to regex
+  # puts "last_six=#{last_six}"
+  exp = Regexp.new("^#{last_six}")
 
-  # loop through whole word list for a given word to find word "chain"
-  while keep_going
-    data.each do |compared_word|
-      total_chars = word.length
-      last_six = word[(total_chars-6)..(total_chars)]
-      # puts "l-#{last_six}"
-      exp = Regexp.new("^#{last_six}")
+  result = []
 
-      first_six = compared_word[0..5]
-      # puts "f-#{first_six}"
-      if (first_six.match(exp) and word != compared_word)
-        chain.push(compared_word)
-        # puts "chain = #{chain}"
-        word = compared_word
-      else
-        keep_going = false
+  first_char = last_six.match(/./).to_s
+  # puts first_char
+  data_subset_for_word = data_subsets[first_char]
+  return [] if data_subset_for_word.nil?
+
+  data_subset_for_word.each do |compared_word|
+    if compared_word.match(exp)
+      if compared_word != word
+        # puts "word = #{word}"
+        # puts "compared word = #{compared_word}"
+        result << compared_word
       end
     end
   end
-
-  # puts "\n"
-
-  if chain.length > 1
-    return chain
-  else
-    return false
-  end
+  result
 end
 
 
 ### main iterator
-data.each_with_index do |word, index|
-  t = recursive_chain(data, word)
-  chains.push(t) if t
-  puts "#{index}" if index % 500 == 0
+hh = 0
+while chain_store.count > 5
+
+  chain_store.each do |chain_store_element|
+    word = chain_store_element.last
+    next_chain_words = next_words(word, data_subsets)
+
+    if next_chain_words.count > 0
+      next_chain_words.each do |chain_word|
+        chain_store_transfer << chain_store_element.push(chain_word)
+        # puts "chain_store_transfer = #{chain_store_transfer}"
+      end
+    end
+    hh+=1
+    puts hh if hh % 1000 == 0
+  end
+
+
+  puts "# word chains = #{chain_store.count}"
+  chain_store = chain_store_transfer
+
+  # puts "chain_store = #{chain_store}"
+  # puts ""
+  # puts chain_store.count
 end
 
 
 ### write results to file
-File.open("results.txt", "w+") do |file|
-  chains.each do |c|
-    file.write "#{c}\n"
+File.open("small_results.txt", "w+") do |file|
+  chain_store.each do |word_chain|
+    file.write "#{word_chain}\n"
   end
 end
