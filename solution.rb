@@ -1,37 +1,38 @@
 data = []
-r = []
-skip_previous_word = nil
-last_parsed_line = nil
 chains = []
-chain = false
 counter  = 0
 
-#### load applicable words into array
+### load applicable words into array
 File.open("./small_words").each_line do |line|
-  parsed_line = line.strip.gsub("'", '').downcase
-  data << parsed_line if (parsed_line.length > 5 and parsed_line != last_parsed_line)
-  last_parsed_line = parsed_line
-end
+  # do not pay attention to uppercase/downcase
+  parsed_line = line.strip.downcase
 
-### recursive method
+  # do not include words that:
+  # 1) contain apostrophes
+  # 2) are less than 6 letters
+  data << parsed_line if (parsed_line.length > 5 and !parsed_line.include?("'"))
+end
+puts data.length
+
+### recursive method called by main iterator
 def recursive_chain(data, word)
   keep_going = true
   chain = []
   chain << word
 
+  # loop through whole word list for a given word to find word "chain"
   while keep_going
     data.each do |compared_word|
       total_chars = word.length
       last_six = word[(total_chars-6)..(total_chars)]
-      puts "l-#{last_six}"
+      # puts "l-#{last_six}"
       exp = Regexp.new("^#{last_six}")
 
       first_six = compared_word[0..5]
-      puts "f-#{first_six}"
-      if (match = first_six.match(exp) and word != compared_word)
+      # puts "f-#{first_six}"
+      if (first_six.match(exp) and word != compared_word)
         chain.push(compared_word)
-        puts "chain = #{chain}"
-        keep_going = true
+        # puts "chain = #{chain}"
         word = compared_word
       else
         keep_going = false
@@ -39,8 +40,7 @@ def recursive_chain(data, word)
     end
   end
 
-  puts "\n"
-
+  # puts "\n"
 
   if chain.length > 1
     return chain
