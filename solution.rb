@@ -3,7 +3,7 @@ chains = []
 counter  = 0
 
 ### load applicable words into array
-File.open("./small_words").each_line do |line|
+File.open("./words").each_line do |line|
   # do not pay attention to uppercase/downcase
   parsed_line = line.strip.downcase
 
