@@ -54,12 +54,12 @@ end
 data.each_with_index do |word, index|
   t = recursive_chain(data, word)
   chains.push(t) if t
-  puts "#{index}" if index % 300 == 0
+  puts "#{index}" if index % 500 == 0
 end
 
 
 ### write results to file
-File.open("small_results.txt", "w+") do |file|
+File.open("results.txt", "w+") do |file|
   chains.each do |c|
     file.write "#{c}\n"
   end
