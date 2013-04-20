@@ -20,15 +20,15 @@ def recursive_chain(data, word)
   chain << word
 
   while keep_going
-    total_chars = word.length+1
-    last_six = word[(total_chars-5)..(total_chars)]
-    # puts "l-#{last_six}"
-    exp = Regexp.new("^#{last_six}")
-
     data.each do |compared_word|
-      first_six = compared_word[0..6]
-      # puts "f-#{first_six}"
-      if (match = first_six.match(exp))
+      total_chars = word.length
+      last_six = word[(total_chars-6)..(total_chars)]
+      puts "l-#{last_six}"
+      exp = Regexp.new("^#{last_six}")
+
+      first_six = compared_word[0..5]
+      puts "f-#{first_six}"
+      if (match = first_six.match(exp) and word != compared_word)
         chain.push(compared_word)
         puts "chain = #{chain}"
         keep_going = true
@@ -39,7 +39,7 @@ def recursive_chain(data, word)
     end
   end
 
-  # puts "\n"
+  puts "\n"
 
 
   if chain.length > 1
@@ -54,6 +54,7 @@ end
 data.each_with_index do |word, index|
   t = recursive_chain(data, word)
   chains.push(t) if t
+  puts "#{index}" if index % 300 == 0
 end
 
 
