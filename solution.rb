@@ -1,11 +1,9 @@
 chain_store = []
-chain_store_transfer = []
-
 data_subsets = {}
 load_counter = 0
 
 ### load applicable words into array
-File.open("./words").each_line do |line|
+File.open("./small_words").each_line do |line|
   # do not pay attention to uppercase/downcase
   parsed_line = line.strip.downcase
 
@@ -53,30 +51,25 @@ end
 
 
 ### main iterator
-hh = 0
-while chain_store.count > 5
+while chain_store.count > 1
+  time_start = Time.new
 
-  chain_store.each do |chain_store_element|
+  chain_store.each_with_index do |chain_store_element, index|
     word = chain_store_element.last
     next_chain_words = next_words(word, data_subsets)
 
     if next_chain_words.count > 0
       next_chain_words.each do |chain_word|
-        chain_store_transfer << chain_store_element.push(chain_word)
-        # puts "chain_store_transfer = #{chain_store_transfer}"
+        chain_store[index] << chain_word
       end
+    else
+      chain_store.delete_at(index)
     end
-    hh+=1
-    puts hh if hh % 1000 == 0
   end
 
-
-  puts "# word chains = #{chain_store.count}"
-  chain_store = chain_store_transfer
-
-  # puts "chain_store = #{chain_store}"
-  # puts ""
-  # puts chain_store.count
+  puts "# word chains = #{chain_store}"
+  puts "time split = #{Time.new - time_start}"
+  puts "\n"
 end
 
 
