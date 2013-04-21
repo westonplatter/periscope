@@ -49,3 +49,4 @@ Time to run = 5.395 (using JRuby 1.7.3)
 ["mcknight", "knight", "knights", "nights", "nightshirts", "shirts", "shirtsleeve", "sleeve", "sleeve's"]
 ["mcknight", "knight", "knights", "nights", "nightshirts", "shirts", "shirtsleeve", "sleeve", "sleeveless"]
 ["mcknight", "knight", "knights", "nights", "nightshirts", "shirts", "shirtsleeve", "sleeve", "sleeves"]
+
