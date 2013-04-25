@@ -1,6 +1,8 @@
 periscope
 =========
 
+Write a program that finds, in the attached list of words, the longest word chain. Two words are in a chain if the last six letters of the first word are the same as the first six letters of the second word. For example: battleground -> grounder -> rounders
+
 words = 87940  
 Hash contains 2862 array subsets  
 
